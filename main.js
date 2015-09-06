@@ -78,6 +78,7 @@ var roll = function(message) {
 }
 
 //under construction
+//should check state before welcoming
 // var checkUserState = function(userID, callback) {
 //     db.find({userID}, function(err, docs) {
 //         if (err) {
@@ -104,7 +105,7 @@ slack.on('message', function(message) {
         console.log(channel.name + ':' + user.name + ':' + message.text);
         var userNameJoined = whoHasJoined(message)
         var userNamePlussed = whoWasPlussed(message)
-        roll()
+        roll(message)
 
         //if someone joined, welcome them and change their state to welcomed
         if (userNameJoined != null) {
