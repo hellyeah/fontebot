@@ -38,16 +38,25 @@ slack.on('message', function(message) {
 
     if (message.type === 'message' && user != null) {
         console.log(channel.name + ':' + user.name + ':' + message.text);
-        if (message.text.indexOf("has joined the channel") > -1) {
-            var indexOfUserNameEnding = message.text.indexOf('>')
-            if (indexOfUserNameEnding > -1) {
-                var userNameAndID = message.text.substr(0,indexOfUserNameEnding+1).replace('&lt;', '<').replace('&gt;', '>')
-                channel.send('Welcome ' + userNameAndID + '! What are you building!?')
-		db.insert({userString: userNameandID, state: 'welcomed'})
-		//insert user name here with a state that they have been welcomed 
-           }
-        }
+        var indexOfUserNameEnding = message.text.indexOf('>')
+        if (indexOfUserNameEnding > -1) {
+		var userNameAndID = message.text.substr(0,indexOfUserNameEnding+1).replace('&lt;', '<').replace('&gt;', '>')
+	
+		//var userState = db.find({userString: 
+        	if (message.text.indexOf("has joined the channel") > -1) { 
+               		channel.send('Welcome ' + userNameAndID + '! What are you building!?')
+			db.insert({userString: userNameAndID, state: 'welcomed'})
+			//insert user name here with a state that they have been welcomed 
+           	}
+	}
     }
+	if (message.type === 'message' && user!= null) {
+		var indexOfAt = message.text.indexOf("@")
+		if ((indexOfAt > -1) && (message.text.indexOf("++") > -1)) {
+			var userName = message.text.substr(indexOfAt,message.text.indexOf(' ')) 
+			db.insert({userString: userName, action: '++'})	
+		}
+	}
 });
 
 slack.login();
