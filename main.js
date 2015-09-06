@@ -64,10 +64,36 @@ var howManyPlusses = function(userID, callback) {
     })
 }
 
-var userNameForID = function(userID) {
-    //maps userID to a userName
-    //return slack.users[id]
+var roll = function(message) {
+    //n = typeof n !== 'undefined' ?  n : 1;
+    if (message.text.substr(0,4) === "roll") {
+        var r = /\d+/
+        var digits = message.text.match(r)
+        if(digits) {
+            channel.send('Random number between 1 and ' + digits + ': ' + Math.floor((Math.random() * digits) + 1))            
+        } else {
+            channel.send('Random number between 1 and 6: ' + Math.floor((Math.random() * 6) + 1))
+        }
+    }
 }
+
+//under construction
+// var checkUserState = function(userID, callback) {
+//     db.find({userID}, function(err, docs) {
+//         if (err) {
+//             callback(null)
+//         } 
+//         //filter for objects that have state property w/ underscore
+//         else if (!docs.hasOwnProperty('state')) {
+//             callback(null)
+//         } else {
+//             callback(docs.)
+//         }
+//     })
+// }
+
+//function to check what a person is building
+
 
 //any writes to channel go here
 slack.on('message', function(message) {
@@ -78,6 +104,8 @@ slack.on('message', function(message) {
         console.log(channel.name + ':' + user.name + ':' + message.text);
         var userNameJoined = whoHasJoined(message)
         var userNamePlussed = whoWasPlussed(message)
+        roll()
+
         //if someone joined, welcome them and change their state to welcomed
         if (userNameJoined != null) {
             channel.send('Welcome ' + makeMention(userNameJoined) + '! What are you building!?')
@@ -85,14 +113,9 @@ slack.on('message', function(message) {
         } 
         //if someone was plussed, let the channel know how many points they have
         if (userNamePlussed != null) {
-            console.log(userNamePlussed)
-		//need to map IDs to usernames...or not
             howManyPlusses(userNamePlussed, function(plusCount) {
-		console.log('plusCount: ' + plusCount)
                channel.send(makeMention(userNamePlussed) + ' has ' + plusCount + ' points')
-                
             })
-
         }
 	}
 });
