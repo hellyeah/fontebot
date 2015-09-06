@@ -48,7 +48,7 @@ var whoWasPlussed = function(message) {
 
 var plusUser = function(userID) {
     console.log('plussed ' + userID)
-    db.insert({userString: userID, action: '++'}) 
+    db.insert({userID: userID, action: '++'})
     return userID
 }
 
@@ -72,7 +72,7 @@ slack.on('message', function(message) {
         //if someone joined, welcome them and change their state to welcomed
         if (userNameJoined != null) {
             channel.send('Welcome ' + makeMention(userNameJoined) + '! What are you building!?')
-			db.insert({userString: userNameJoined, state: 'welcome'})
+			db.insert({userID: userNameJoined, state: 'welcome'})
         } 
         //if someone was plussed, let the channel know how many points they have
         if (userNamePlussed != null) {
