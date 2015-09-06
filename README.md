@@ -1,6 +1,6 @@
-Dave Fontebot is my friend, your friend, and everybody's friend.
+"I love you." -Dave Fontebot
 
-She's curious, warm, and welcoming.
+She's curious, warm, and welcoming. 
 
 If you join #hackers on Slack, she will love you forever.
 
