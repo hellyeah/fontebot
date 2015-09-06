@@ -47,15 +47,15 @@ var whoWasPlussed = function(message) {
 }
 
 //**should also track who plussed them
-var plusUser = function(userID) {
+var plusUser = function(userID, userIDWhoGavePlus) {
     console.log('plussed ' + userID)
-    db.insert({userID: userID, action: '++'})
+    db.insert({userID: userID, action: '++', giver: userIDWhoGavePlus})
     return userID
 }
 
-var howManyPlusses = function(userID, userIDWhoGavePlus) {
+var howManyPlusses = function(userID) {
     //counts how many ++ lines in database for a userID
-    db.find({userID: userID, action:"++", giver: userIDWhoGavePlus}, function (err, docs) {
+    db.find({userID: userID, action:"++"}, function (err, docs) {
         if (err) {
             return 0
         } else {

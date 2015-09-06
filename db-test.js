@@ -4,5 +4,5 @@ var Datastore = require('nedb')
 // You can issue commands right away
 
 db.find({userID:"U08A0226R", action:"++"}, function (err, docs) {
-	console.log(docs)
+	console.log(docs.length)
 })
