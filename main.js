@@ -31,3 +31,15 @@ slack.on('open', function () {
 });
  
 slack.login();
+
+slack.on('message', function(message) {
+    var channel = slack.getChannelGroupOrDMByID(message.channel);
+    var user = slack.getUserByID(message.user);
+
+    if (message.type === 'message') {
+        console.log(channel.name + ':' + user.name + ':' + message.text);
+        if (message.text.indexOf("has joined the channel") > -1) {
+            console.log('Welcome @' + user.name + '! What are you building!?');
+        }
+    }
+});
