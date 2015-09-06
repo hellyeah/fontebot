@@ -70,10 +70,12 @@ var roll = function(message) {
         var r = /\d+/
         var digits = message.text.match(r)
         if(digits) {
-            channel.send('Random number between 1 and ' + digits + ': ' + Math.floor((Math.random() * digits) + 1))            
+            return ('Random number between 1 and ' + digits + ': ' + Math.floor((Math.random() * digits) + 1))
         } else {
-            channel.send('Random number between 1 and 6: ' + Math.floor((Math.random() * 6) + 1))
+            return ('Random number between 1 and 6: ' + Math.floor((Math.random() * 6) + 1))
         }
+    } else {
+        return null
     }
 }
 
@@ -105,7 +107,7 @@ slack.on('message', function(message) {
         console.log(channel.name + ':' + user.name + ':' + message.text);
         var userNameJoined = whoHasJoined(message)
         var userNamePlussed = whoWasPlussed(message)
-        roll(message)
+        var rollMessage = roll(message)
 
         //if someone joined, welcome them and change their state to welcomed
         if (userNameJoined != null) {
@@ -117,6 +119,10 @@ slack.on('message', function(message) {
             howManyPlusses(userNamePlussed, function(plusCount) {
                channel.send(makeMention(userNamePlussed) + ' has ' + plusCount + ' points')
             })
+        }
+
+        if (rollMessage != null) {
+            channel.send(rollMessage)
         }
 	}
 });
