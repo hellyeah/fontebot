@@ -46,18 +46,27 @@ var whoWasPlussed = function(message) {
     }
 }
 
+//**should also track who plussed them
 var plusUser = function(userID) {
     console.log('plussed ' + userID)
     db.insert({userID: userID, action: '++'})
     return userID
 }
 
-var howManyPlusses = function(userID) {
+var howManyPlusses = function(userID, userIDWhoGavePlus) {
     //counts how many ++ lines in database for a userID
+    db.find({userID: userID, action:"++", giver: userIDWhoGavePlus}, function (err, docs) {
+        if (err) {
+            return 0
+        } else {
+            return docs.length
+        }
+    })
 }
 
 var userNameForID = function(userID) {
     //maps userID to a userName
+    //return slack.users[id]
 }
 
 //any writes to channel go here
@@ -76,7 +85,8 @@ slack.on('message', function(message) {
         } 
         //if someone was plussed, let the channel know how many points they have
         if (userNamePlussed != null) {
-            //channel.send(howManyPlusses)
+            //need to map IDs to usernames...or not
+            channel.send(makeMention(userNamePlussed) + ' has ' + howManyPlusses(userNamePlussed) + ' points')
         }
 	}
 });
