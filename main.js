@@ -6,56 +6,78 @@ var Datastore = require('nedb')
 db.find({n:11}, function (err, docs) {
 	console.log(docs)
 })
-
-//db.find({n:5} function (err, docs) {
-//	console.log(docs)
-//})
-
-//var doc = { hello: 'world'
-//               , n: 11
-//               , today: new Date()
-//               , nedbIsAwesome: true
-//               , notthere: null
-//               , notToBeSaved: undefined  // Will not be saved
-//               , fruits: [ 'apple', 'orange', 'pear' ]
-//               , infos: { name: 'nedb' }
-//               };
-
-//db.insert(doc, function (err, newDoc) {   // Callback is optional
-  // newDoc is the newly inserted document, including its _id
-  // newDoc has no key called notToBeSaved since its value was undefined
-//});
 	
 var Slack = require('slack-client');
  
+//set token by calling "TOKEN=_token_ node main.js" to run fontebot
 var token = process.env.TOKEN;
  
 var slack = new Slack(token, true, true);
 
+//expected input "@userName"
+var makeMention = function(userId) {
+    //not sure if I need the replace...could just substitute in html entities directly
+    return ('<@' + userId + '>').replace('&lt;', '<').replace('&gt;', '>');
+}
+
+var getFirstTaggedUserID = function(message) {
+    var indexOfUserNameBeginning = message.text.indexOf('<@')
+    var indexOfUserNameEnding = message.text.indexOf('>')
+    if (indexOfUserNameBeginning > -1 && indexOfUserNameEnding > -1) {
+        return userNameAndID = message.text.substr(indexOfUserNameBeginning+2,(indexOfUserNameEnding-indexOfUserNameBeginning-2))
+    } else {
+        return null
+    }
+}
+
+var whoHasJoined = function(message) {
+    if (message.text.indexOf("has joined the channel") > -1) {
+        return getFirstTaggedUser(message)
+    } else {
+        return null
+    }
+}
+
+var whoWasPlussed = function(message) {
+    if (message.text.indexOf("++") > -1) {
+        return plusUser(getFirstTaggedUser(message))
+    } else {
+        return null
+    }
+}
+
+var plusUser = function(userID) {
+    console.log('plussed ' + userID)
+    db.insert({userString: userID, action: '++'})
+    return userID
+}
+
+var howManyPlusses = function(userID) {
+    //counts how many ++ lines in database for a userID
+}
+
+var userNameForID = function(userID) {
+    //maps userID to a userName
+}
+
+//any writes to channel go here
 slack.on('message', function(message) {
     var channel = slack.getChannelGroupOrDMByID(message.channel);
     var user = slack.getUserByID(message.user);
 
     if (message.type === 'message' && user != null) {
         console.log(channel.name + ':' + user.name + ':' + message.text);
-        var indexOfUserNameEnding = message.text.indexOf('>')
-        if (indexOfUserNameEnding > -1) {
-		var userNameAndID = message.text.substr(0,indexOfUserNameEnding+1).replace('&lt;', '<').replace('&gt;', '>')
-	
-		//var userState = db.find({userString: 
-        	if (message.text.indexOf("has joined the channel") > -1) { 
-               		channel.send('Welcome ' + userNameAndID + '! What are you building!?')
-			db.insert({userString: userNameAndID, state: 'welcomed'})
-			//insert user name here with a state that they have been welcomed 
-           	}
-	}
-    }
-	if (message.type === 'message' && user!= null) {
-		var indexOfAt = message.text.indexOf("@")
-		if ((indexOfAt > -1) && (message.text.indexOf("++") > -1)) {
-			var userName = message.text.substr(indexOfAt,message.text.indexOf(' ')) 
-			db.insert({userString: userName, action: '++'})	
-		}
+        var userNameJoined = whoHasJoined(message)
+        var userNamePlussed = whoWasPlussed(message)
+        //if someone joined, welcome them and change their state to welcomed
+        if (userNameJoined != null) {
+            channel.send('Welcome ' + makeMention(userNameJoined) + '! What are you building!?')
+			db.insert({userString: userNameJoined, state: 'welcome'})
+        }
+        //if someone was plussed, let the channel know how many points they have
+        if (userNamePlussed != null) {
+            //channel.send(howManyPlusses)
+        }
 	}
 });
 
