@@ -1,7 +1,5 @@
-"I love you." -Dave Fontebot
+Dave Fontebot is curious, warm, and welcoming. 
 
-She's curious, warm, and welcoming. 
-
-If you join #hackers on Slack, she will love you forever.
+If you join [#hackers on Slack](hackathons.com), she will love you forever.
 
 Dave Fontebot would love more features. Please send her a PR <3
