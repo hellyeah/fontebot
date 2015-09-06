@@ -32,7 +32,7 @@ var getFirstTaggedUserID = function(message) {
 
 var whoHasJoined = function(message) {
     if (message.text.indexOf("has joined the channel") > -1) {
-        return getFirstTaggedUser(message)
+        return getFirstTaggedUserID(message)
     } else {
         return null
     }
@@ -40,7 +40,7 @@ var whoHasJoined = function(message) {
 
 var whoWasPlussed = function(message) {
     if (message.text.indexOf("++") > -1) {
-        return plusUser(getFirstTaggedUser(message))
+        return plusUser(getFirstTaggedUserID(message))
     } else {
         return null
     }
@@ -48,7 +48,7 @@ var whoWasPlussed = function(message) {
 
 var plusUser = function(userID) {
     console.log('plussed ' + userID)
-    db.insert({userString: userID, action: '++'})
+    db.insert({userString: userID, action: '++'}) 
     return userID
 }
 
@@ -73,7 +73,7 @@ slack.on('message', function(message) {
         if (userNameJoined != null) {
             channel.send('Welcome ' + makeMention(userNameJoined) + '! What are you building!?')
 			db.insert({userString: userNameJoined, state: 'welcome'})
-        }
+        } 
         //if someone was plussed, let the channel know how many points they have
         if (userNamePlussed != null) {
             //channel.send(howManyPlusses)
