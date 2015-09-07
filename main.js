@@ -97,23 +97,26 @@ var roll = function(message) {
 
 //function to check what a person is building
 
-var messageQueue = []
+var welcomeQueue = {}
 
-function queueMessage (channel ,msg) {
-  messageQueue.push([channel, msg])
+function queueWelcome (channel, msg) {
+  if (channel.name in welcomeQueue) {
+    welcomeQueue[channel.name].push([channel, msg])
+  } else {
+    welcomeQueue[channel.name] = [[channel, msg]]
+  }
 }
 
 setInterval(function () {
 
-  if (messageQueue.length > 0) {
-    for (var i = 0; i < messageQueue.length; i++) {
-      var item = messageQueue[i]
-      item[0].send(item[1])
+  for (var k in welcomeQueue) {
+    if (welcomeQueue[k].length > 0) {
+      var mentions = welcomeQueue[k].map(function (u) { return makeMention(u) }).join(' ')
+      channel.send('Welcome ' + mentions + '! What are you building?')
     }
-
-    messageQueue = []
-
   }
+
+  welcomeQueue = {}
 
 }, 10 * 60 * 1000) // 10 minutes
 
@@ -131,7 +134,7 @@ slack.on('message', function(message) {
 
     //if someone joined, welcome them and change their state to welcomed
     if (userNameJoined != null) {
-      queueMessage(channel, 'Welcome ' + makeMention(userNameJoined) + '! What are you building!?')
+      queueWelcome(channel, userNameJoined)
       db.insert({userID: userNameJoined, state: 'welcome'})
     } 
     //if someone was plussed, let the channel know how many points they have
