@@ -4,6 +4,7 @@
   "hubot-google-images",
   "hubot-google-translate",
   "hubot-pugme",
+  "hubot-plusplus",
   "hubot-maps",
   "hubot-redis-brain",
   "hubot-rules",
