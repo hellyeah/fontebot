@@ -29,7 +29,6 @@ module.exports = function(robot){
   }
 
   function welcomeUsers(){
-    console.log(new Date())
     var users = getUsers().join(', ')
     if (!_.isEmpty(users)){
       var message = 'Welcome ' + users + '! ' + _.sample(WELCOME_MESSAGES)
@@ -54,7 +53,6 @@ module.exports = function(robot){
       name: user.name
     })
     updateBrain(queue)
-    console.log('added' + user)
   }
 
   /** set the welcome_queue */
