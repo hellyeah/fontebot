@@ -13,6 +13,7 @@
     "hubot-scripts": "^2.16.2",
     "hubot-shipit": "^0.2.0",
     "hubot-slack": "^3.3.0",
+    "node-schedule": "^0.2.9",
     "underscore": "^1.8.3"
   },
   "engines": {
