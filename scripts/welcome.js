@@ -12,7 +12,7 @@ module.exports = function(robot){
   var WELCOME_MESSAGES = ['What are you working on?', 'Tell us about yourself!', 'Anything we can help you with?']
 
   /** check the welcome queue every 10 minutes */
-  var welcomeSchedule = scheduler.scheduleJob('10 * * * * *', function() {
+  var welcomeSchedule = scheduler.scheduleJob('*/10 * * * *', function() {
       welcomeUsers()
   });
 
@@ -48,11 +48,14 @@ module.exports = function(robot){
   /** add user to the queue */
   function addUser(user){
     var queue = getWelcomeQueue()
-    queue.push({
-      id: user.id,
-      name: user.name
-    })
-    updateBrain(queue)
+    //ensure only unique users get added
+    if(_.isUndefined(_.find(queue, {id: user.id}))){
+      queue.push({
+        id: user.id,
+        name: user.name
+      })
+      updateBrain(queue)
+    }
   }
 
   /** set the welcome_queue */
