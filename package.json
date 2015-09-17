@@ -1,0 +1,23 @@
+{
+  "name": "fontebot",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Sam Couch <sam@couch.rocks>",
+  "description": "Fontebot is curious, warm, and welcoming.",
+  "dependencies": {
+    "clark": "0.0.6",
+    "hubot": "^2.16.0",
+    "hubot-diagnostics": "0.0.1",
+    "hubot-help": "^0.1.1",
+    "hubot-redis-brain": "0.0.3",
+    "hubot-scripts": "^2.16.2",
+    "hubot-shipit": "^0.2.0",
+    "hubot-slack": "^3.3.0",
+    "node-schedule": "^0.2.9",
+    "querystring": "^0.2.0",
+    "underscore": "^1.8.3"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}
