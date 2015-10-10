@@ -1,6 +1,6 @@
 // Type 3: Persistent datastore with automatic loading
 var Datastore = require('nedb')
-  , db = new Datastore({ filename: 'path/to/datafile', autoload: true });
+  , db = new Datastore({ filename: 'database.nedb', autoload: true });
 // You can issue commands right away
 
 db.find({n:11}, function (err, docs) {
@@ -65,18 +65,18 @@ var howManyPlusses = function(userID, callback) {
 }
 
 var roll = function(message) {
-    //n = typeof n !== 'undefined' ?  n : 1;
-    if (message.text.substr(0,4) === "roll") {
-        var r = /\d+/
-        var digits = message.text.match(r)
-        if(digits) {
-            return ('Random number between 1 and ' + digits + ': ' + Math.floor((Math.random() * digits) + 1))
-        } else {
-            return ('Random number between 1 and 6: ' + Math.floor((Math.random() * 6) + 1))
-        }
+  //n = typeof n !== 'undefined' ?  n : 1;
+  if (message.text.substr(0,4) === "roll") {
+    var r = /\d+/
+    var digits = message.text.match(r)
+    if (digits) {
+      return ('Random number between 1 and ' + digits + ': ' + Math.floor((Math.random() * digits) + 1))
     } else {
-        return null
+      return ('Random number between 1 and 6: ' + Math.floor((Math.random() * 6) + 1))
     }
+  } else {
+    return null
+  }
 }
 
 //under construction
@@ -97,35 +97,57 @@ var roll = function(message) {
 
 //function to check what a person is building
 
+var welcomeQueue = {}
+
+function queueWelcome (channel, msg) {
+  if (channel.name in welcomeQueue) {
+    welcomeQueue[channel.name].push([channel, msg])
+  } else {
+    welcomeQueue[channel.name] = [[channel, msg]]
+  }
+}
+
+setInterval(function () {
+
+  for (var k in welcomeQueue) {
+    if (welcomeQueue[k].length > 0) {
+      var mentions = welcomeQueue[k].map(function (u) { return makeMention(u) }).join(' ')
+      channel.send('Welcome ' + mentions + '! What are you building?')
+    }
+  }
+
+  welcomeQueue = {}
+
+}, 10 * 60 * 1000) // 10 minutes
+
 
 //any writes to channel go here
 slack.on('message', function(message) {
-    var channel = slack.getChannelGroupOrDMByID(message.channel);
-    var user = slack.getUserByID(message.user);
+  var channel = slack.getChannelGroupOrDMByID(message.channel);
+  var user = slack.getUserByID(message.user);
 
-    if (message.type === 'message' && user != null) {
-        console.log(channel.name + ':' + user.name + ':' + message.text);
-        var userNameJoined = whoHasJoined(message)
-        var userNamePlussed = whoWasPlussed(message)
-        var rollMessage = roll(message)
+  if (message.type === 'message' && user != null) {
+    console.log(channel.name + ':' + user.name + ':' + message.text);
+    var userNameJoined = whoHasJoined(message)
+    var userNamePlussed = whoWasPlussed(message)
+    var rollMessage = roll(message)
 
-        //if someone joined, welcome them and change their state to welcomed
-        if (userNameJoined != null) {
-            channel.send('Welcome ' + makeMention(userNameJoined) + '! What are you building!?')
-			db.insert({userID: userNameJoined, state: 'welcome'})
-        } 
-        //if someone was plussed, let the channel know how many points they have
-        if (userNamePlussed != null) {
-            howManyPlusses(userNamePlussed, function(plusCount) {
-               channel.send(makeMention(userNamePlussed) + ' has ' + plusCount + ' points')
-            })
-        }
+    //if someone joined, welcome them and change their state to welcomed
+    if (userNameJoined != null) {
+      queueWelcome(channel, userNameJoined)
+      db.insert({userID: userNameJoined, state: 'welcome'})
+    } 
+    //if someone was plussed, let the channel know how many points they have
+    if (userNamePlussed != null) {
+      howManyPlusses(userNamePlussed, function(plusCount) {
+        channel.send(makeMention(userNamePlussed) + ' has ' + plusCount + ' points')
+      })
+    }
 
-        if (rollMessage != null) {
-            channel.send(rollMessage)
-        }
-	}
+    if (rollMessage != null) {
+      channel.send(rollMessage)
+    }
+  }
 });
 
 slack.login();
-

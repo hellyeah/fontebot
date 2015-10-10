@@ -1,0 +1,25 @@
+{
+  "name": "fontebot",
+  "version": "1.0.0",
+  "description": "Dave Fontebot is curious, warm, and welcoming.",
+  "main": "main.js",
+  "dependencies": {
+    "nedb": "^1.1.3",
+    "slack-client": "^1.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hellyeah/fontebot.git"
+  },
+  "author": "Dave Fontenot <dave@hackmatch.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/hellyeah/fontebot/issues"
+  },
+  "homepage": "https://github.com/hellyeah/fontebot#readme"
+}
